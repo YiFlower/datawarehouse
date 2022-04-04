@@ -23,12 +23,12 @@ public class JustMain {
         // 2.1读取本地文件
         SendData readLocalFile = new SendData();
         // 用户行为表、用户画像表、商品画像表
-//        String userBehaviorDir = "D:\\DataSet\\user_item_behavior_history.csv";  // user_item_behavior_history.csv
+        String userBehaviorDir = "D:\\DataSet\\user_item_behavior_history.csv";  // user_item_behavior_history.csv
         String userProfileDir = "D:\\DataSet\\user_profile.csv";
-//        String itemProfileDir = "D:\\DataSet\\item_profile.csv";
-//        readLocalFile.readLocalDataFile(userBehaviorDir);
-//        readLocalFile.readLocalDataFile(userProfileDir);
-//        readLocalFile.readLocalDataFile(itemProfileDir);
+        String itemProfileDir = "D:\\DataSet\\item_profile.csv";
+        readLocalFile.readLocalDataFile(userBehaviorDir);
+        readLocalFile.readLocalDataFile(userProfileDir);
+        readLocalFile.readLocalDataFile(itemProfileDir);
         // 2.2 写入到MySQL
         // 为了减少内存压力，在ReadLocalFile类中读取到数据后即写入MySQL
 
