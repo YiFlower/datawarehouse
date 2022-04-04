@@ -26,9 +26,9 @@ public class JustMain {
         String userBehaviorDir = "D:\\DataSet\\user_item_behavior_history.csv";  // user_item_behavior_history.csv
         String userProfileDir = "D:\\DataSet\\user_profile.csv";
         String itemProfileDir = "D:\\DataSet\\item_profile.csv";
-        readLocalFile.readLocalDataFile(userBehaviorDir);
-        readLocalFile.readLocalDataFile(userProfileDir);
-        readLocalFile.readLocalDataFile(itemProfileDir);
+//        readLocalFile.readLocalDataFile(userBehaviorDir);
+//        readLocalFile.readLocalDataFile(userProfileDir);
+//        readLocalFile.readLocalDataFile(itemProfileDir);
         // 2.2 写入到MySQL
         // 为了减少内存压力，在ReadLocalFile类中读取到数据后即写入MySQL
 
