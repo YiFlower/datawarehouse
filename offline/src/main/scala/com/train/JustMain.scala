@@ -1,16 +1,21 @@
 package com.train
 
-import com.train.controller.SparkController
+import com.train.controller.DWDController
 
 object JustMain {
   // ODS -> DWD
   def run1: Unit = {
-    SparkController.hiveProfile
+    DWDController.controller
   }
 
   // DWD -> DWS
   def run2: Unit = {
-    println("Hello")
+    println("DWD -> DWS")
+  }
+
+  // DWS -> APP
+  def run3: Unit ={
+    println("DWS -> APP")
   }
 
   def main(args: Array[String]): Unit = {
