@@ -92,8 +92,8 @@ object DWDController extends LoggerLevel {
      * tb1
      * 1. 格式化日期 yyyy-MM-dd
      * 2. 将用户行为类型转换为中文 - clk->点击、fav->喜欢、cart->加购物车、pay->购买
-     *
-     * tb2、tb3无需操作
+     * 3. 将用户性别转换为男女 1：未知，2：女，3：男
+     * tb3无需操作
      * */
     session.sql(
       s"""
@@ -101,19 +101,36 @@ object DWDController extends LoggerLevel {
         |,CASE behavior_type WHEN 'clk' THEN '点击' WHEN 'fav' THEN '喜欢'
         |WHEN 'cart' THEN '加购物车' WHEN 'pay' THEN '购买' END AS behavior_type
         |,partion_month_date FROM ${user_behavior_view}
-        |""".stripMargin).createOrReplaceTempView(s"$user_profile_view")
+        |""".stripMargin).createOrReplaceTempView(s"$user_behavior_view")
 
     session.sql(
-      s"""
-        |SELECT * FROM ${user_profile_view}
-        |""".stripMargin).show(20,false)
-
+      """
+        |user_gender
+        |""".stripMargin)
     // 5.写入DWD、DIM
     /**
      * tb1写入DWD
      * tb2、tb3写入DIM
      * 方法：直接保存视图即可
      * */
+    session.sql(
+      s"""
+        |INSERT OVERWRITE TABLE bdw_dwd.user_item_behavior_history PARTITION(partion_month_date="2019-06")
+        |SELECT behavior_date,time_stamp,user_id,commodity_id,behavior_type
+        |FROM ${user_behavior_view} WHERE partion_month_date="2019-06"
+        |""".stripMargin)
+
+    session.sql(
+      s"""
+         |INSERT INTO TABLE bdw_dim.user_profile
+         |SELECT * FROM ${user_profile_view}
+         |""".stripMargin)
+
+    session.sql(
+      s"""
+         |INSERT INTO TABLE bdw_dim.item_profile
+         |SELECT * FROM ${item_profile_view}
+         |""".stripMargin)
 
     result.show(20, false)
     SparkSessionUtils.stopSpark(session)
