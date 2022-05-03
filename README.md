@@ -1,3 +1,7 @@
+---
+typora-root-url: ./
+---
+
 # 关于此仓库
 
 此仓库是使用互联网上公开的数据集，模拟业务需求，以大数据处理技术为核心，展示大数据时代，对海量数据的全生命周期处理方式。
@@ -99,7 +103,7 @@
 
 总体一共分为贴源层、明细层、汇总层、应用层、展示层。贴源层内是用户的各类行为数据和商品、用户维度数据，经标准化处理和维度划分后写入数仓明细层与维度层；为了分析时减少关联表，明细层与维度层关联为大宽表汇入汇总层；在汇总层内，计算报表指标和分析指标写入服务层，展示层直接从服务层内取数，做可视化展示。
 
-![](F:\Project\JavaProject\datawarehouse\image\总体设计.png)
+![总体分层设计](./image/总体设计.png)
 
 #### 2. 数据流程设计
 
@@ -107,7 +111,7 @@
 
 ODS到APP使用DolphinScheduler调度所有任务，使用Yarn做统一资源调度。
 
-![](F:\Project\JavaProject\datawarehouse\image\数据流程设计.png)
+![数据流程设计](./image/数据流程设计.png)
 
 #### 3. 命名设计
 
@@ -219,47 +223,47 @@ APP层是DWS和展示层之间的缓冲层，用于存储计算后的指标，�
 
 - [x] 月增长用户数
 
-![1651598473088](C:\Users\Y1Flower\AppData\Local\Temp\1651600006313.png)
+![月增长用户数](./image/月增长用户数量.png)]
 
 - [x] 平台用户年龄段
 
-![1651599926849](C:\Users\Y1Flower\AppData\Local\Temp\1651599926849.png)
+![平台用户年龄段](./image/平台用户年龄段.png)
 
 - [x] 当月业务新开展城市
 
-![1651600362137](C:\Users\Y1Flower\AppData\Local\Temp\1651600362137.png)
+![当月业务新开展城市](./image/月增长城市数量.png)
 
 - [x] 当月平台每日交易量环比
 
-![1651601033058](C:\Users\Y1Flower\AppData\Local\Temp\1651601149879.png)
+![当月平台每日交易量环比](./image/平台每日交易量环比.png)
 
 - [x] 当月交易总量趋势图
 
-![1651601449084](C:\Users\Y1Flower\AppData\Local\Temp\1651601449084.png)
+![当月交易总量趋势图](./image/当月交易趋势.png)
 
 - [x] 当月点击&购买转化比
 
-![1651601562570](C:\Users\Y1Flower\AppData\Local\Temp\1651601562570.png)
+![当月点击&购买转化比](./image/点击&购买转化率.png)
 
 - [x] 当月活跃用户Top10
 
-![1651601743840](C:\Users\Y1Flower\AppData\Local\Temp\1651601743840.png)
+![当月活跃用户Top10](./image/活跃用户Top10.png)
 
 - [x] 当月优质客户Top10
 
-![1651601817205](C:\Users\Y1Flower\AppData\Local\Temp\1651601817205.png)
+![当月优质客户Top10](./image/优质客户Top10.png)
 
 - [x] 当月商品热度Top10
 
-![1651601987503](C:\Users\Y1Flower\AppData\Local\Temp\1651601987503.png)
+![当月商品热度Top10](./image/热度商品Top10.png)
 
 - [x] 各年龄段最喜爱的商品
 
-![1651602596104](C:\Users\Y1Flower\AppData\Local\Temp\1651602596104.png)
+![各年龄段最喜爱的商品](./image/不同年龄段喜欢的商品.png)
 
-- [ ] 不同性别最喜欢的商品
+- [x] 不同性别最喜欢的商品
 
-![1651602717447](C:\Users\Y1Flower\AppData\Local\Temp\1651602717447.png)
+![不同性别最喜欢的商品](./image/不同性别喜欢的商品.png)
 
 #### 7. 调度开发
 
