@@ -11,39 +11,152 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <scala.version>2.11.12</scala.version>
+        <scala.mv>2.11</scala.mv>
         <flink.version>1.12.4</flink.version>
     </properties>
+
+      <dependencies>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-api-scala-bridge_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+              <!--<scope>provided</scope>-->
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-planner-blink_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+              <!--<scope>provided</scope>-->
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-common</artifactId>
+              <version>${flink.version}</version>
+              <!--<scope>provided</scope>-->
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-clients_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-scala_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-streaming-scala_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+      </dependencies>
+
+    <!--  <dependencies>
+          &lt;!&ndash;Table API + DataStream Scala 版&ndash;&gt;
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-api-scala-bridge_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-connector-kafka_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-connector-jdbc_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          &lt;!&ndash;function&ndash;&gt;
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-api-java</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-planner_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-table-planner-blink_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          &lt;!&ndash;local&ndash;&gt;
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-clients_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-scala_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.flink</groupId>
+              <artifactId>flink-streaming-scala_${scala.mv}</artifactId>
+              <version>${flink.version}</version>
+          </dependency>
+      </dependencies>-->
 
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <appendAssemblyId>true</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.example.slink.MyOutputSink</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>assembly</goal>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>com.google.code.findbugs:jsr305</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <!-- Do not copy the signatures in the META-INF folder.
+                                    Otherwise, this might cause SecurityExceptions when using the JAR. -->
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- Replace this with the main class of your job -->
+                                    <mainClass>com.training.dw.JustMain</mainClass>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Scala Compiler -->
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.4.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>
