@@ -18,7 +18,7 @@ object OdsCalc {
         |  `ts` BIGINT
         |) WITH (
         |  'connector' = 'kafka',
-        |  'topic' = 'bigdata-01',
+        |  'topic' = 'example-dw-ods',
         |  'properties.bootstrap.servers' = 'cdh02:9092,cdh03:9092',
         |  'properties.group.id' = 'flink-group-001',
         |  'scan.startup.mode' = 'earliest-offset',

@@ -41,7 +41,8 @@ object AppCalcHotCity {
       """
         |CREATE TABLE mysqlSinkAppHotCityTable (
         |  `dt` VARCHAR(15) PRIMARY KEY,
-        |  `city` VARCHAR(20)
+        |  `city` VARCHAR(20),
+        |  PRIMARY KEY (dt) NOT ENFORCED
         |) WITH (
         | 'connector' = 'jdbc',
         | 'url' = 'jdbc:mysql://192.168.1.100:3306/app?useSSL=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8',
