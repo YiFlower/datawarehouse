@@ -285,7 +285,149 @@ APP层是DWS和展示层之间的缓冲层，用于存储计算后的指标，�
 
 ## 二、实时数仓
 
-</>
+### （一）数据流程设计
+
+数据集是CSV文件的形式，编写Java程序读取CSV文件，流式写入Kafka模拟业务数据库入ODS；使用Flink标准处理后写入DWD；在DWD内进一步把需要分析的表关联维度表写入DWS，计算后的结果落到APP层，存入MySQL；最终使用SpringBoot + MyBatis读取MySQL数据做后端，HTML + JQuery做前端看板页面。
+
+整体DolphinScheduler调度所有任务，使用Yarn做统一资源调度。
+
+![实时数仓架构](./image/实时数仓架构图.png)
+
+### （二）启动流程
+
+一共有3个model，分别是streamData，用于发送数据到Kafka；realtime是实时计算，计算结果落地到MySQL；realtimeApp是将计算的结果展示到Web上。需要分别打包三个项目到服务器运行，服务器需要有MySQL服务、Flink、Kafka等服务。操作步骤如下说明。
+
+#### 1. 启动Flink Session
+
+由于任务较多，所以采用FlinkSession的方式运行小任务；对于较大的任务，则采用Flink On Yarn App模式。启动Session会返回一个URL地址，其中host:port是用于提交Flink任务时需要指定的会话标识。
+
+```
+yarn-session.sh  -nm flink-session-001 -jm 2048 -d 
+# JobManager Web Interface: http://cdh03:34429
+```
+
+
+
+#### 2. Kafka新建数仓话题
+
+```
+# delete
+kafka-topics --delete --topic example-dw-ods --zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+kafka-topics --delete --topic example-dw-dwd --zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+kafka-topics --delete --topic example-dw-dws --zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+
+# create
+kafka-topics --create --partitions 10 --replication-factor 1 \
+--topic example-dw-ods \
+--zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+
+kafka-topics --create --partitions 10 --replication-factor 1 \
+--topic example-dw-dwd \
+--zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+
+kafka-topics --create --partitions 10 --replication-factor 1 \
+--topic example-dw-dws \
+--zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+
+# list
+kafka-topics --list --zookeeper cdh01:2181,cdh02:2181,cdh03:2181
+```
+
+
+
+#### 3. 创建MySQL落地表
+
+```
+-- DELETE
+DROP TABLE IF NOT EXISTS new_user_count;
+DROP TABLE IF NOT EXISTS total_sales;
+DROP TABLE IF NOT EXISTS hot_city;
+DROP TABLE IF NOT EXISTS active_user_count;
+
+-- CREATE
+CREATE TABLE IF NOT EXISTS new_user_count (
+`dt` VARCHAR(15),
+`add_user` VARCHAR(20),
+PRIMARY KEY(dt)
+);
+
+CREATE TABLE IF NOT EXISTS total_sales (
+`dt` VARCHAR(15),
+`total` VARCHAR(20),
+PRIMARY KEY(dt)
+);
+
+CREATE TABLE IF NOT EXISTS hot_city (
+`dt` VARCHAR(15),
+`city` VARCHAR(20),
+PRIMARY KEY(dt)
+);
+
+CREATE TABLE IF NOT EXISTS active_user_count (
+`dt` VARCHAR(15),
+`user_name` VARCHAR(20),
+PRIMARY KEY(dt)
+);
+```
+
+
+
+#### 4. 启动业务大屏Web
+
+```
+java -jar ./realtimeApp-0.0.1-SNAPSHOT.jar
+```
+
+
+
+#### 5. 启动Flink任务
+
+```
+# DWS -> APP
+flink run -m cdh03:34429 -c com.bw.calc.app.AppCalcNewUserCount  ./FlinkModule-1.0-SNAPSHOT.jar
+flink run -m cdh03:34429 -c com.bw.calc.app.AppCalcSalesCount  ./FlinkModule-1.0-SNAPSHOT.jar
+flink run -m cdh03:34429 -c com.bw.calc.app.AppCalcHotCity  ./FlinkModule-1.0-SNAPSHOT.jar
+flink run -m cdh03:34429 -c com.bw.calc.app.AppCalcActiveUser  ./FlinkModule-1.0-SNAPSHOT.jar
+# ODS -> DWD
+flink run -m cdh03:34429 -c com.bw.calc.dw.OdsCalc  ./FlinkModule-1.0-SNAPSHOT.jar
+
+# DWD -> DWS，任务较大，单独启动
+flink run-application -t yarn-application ./FlinkModule-1.0-SNAPSHOT.jar
+```
+
+
+
+#### 6.启动数据发送服务
+
+启动此任务后，数据将流式的发送到Kafka ODS；每发送1000条，sleep（0，1）秒。
+
+```
+java -jar streamData-1.0-SNAPSHOT-jar-with-dependencies.jar 
+```
+
+---
+
+至此，整个流程即启动完毕。启动完成后，如果有开启Kafka消费端，将能实时监控到整个程序运行过程中的数据流动。
+
+
+
+### （三）运行效果
+
+运行前，实时看板的四个指标都为0。
+
+![实时看板](./image/实时看板.png)
+
+
+
+待项目完整启动后，指标将根据实时计算的结果展示（基于每秒一次请求接口的结果变化）。
+
+![实时看板](./image/实时看板_End.png)
+
+
+
+GIF：
+
+![业务看板](./image/业务看板.gif)
 
 
 
