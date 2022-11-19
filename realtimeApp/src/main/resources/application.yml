@@ -3,10 +3,17 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.1.100:3306/app?serverTimezone=GMT%2B8&useSSL=false
     username: root
     password: password
+  thymeleaf:
+    cache: false              # 开发时关闭缓存,不然没法看到实时页面
+    prefix: classpath:/templates/
+    suffix: .html
 
+server:
+  port: 8090

@@ -3,19 +3,23 @@
 <mapper namespace="com.example.dao.RealAppMapper">
 
     <select id="queryNewUserCount" resultType="com.example.entity.NewUserCount">
-        SELECT * FROM tb1
+        SELECT MAX(dt) AS dt, add_user
+        FROM new_user_count
     </select>
 
     <select id="queryTotalSales" resultType="com.example.entity.TotalSales">
-        SELECT * FROM tb2
+        SELECT MAX(dt) AS dt, total
+        FROM total_sales
     </select>
 
     <select id="queryHotCity" resultType="com.example.entity.HotCity">
-        SELECT * FROM tb3
+        SELECT MAX(dt) AS dt, city
+        FROM hot_city
     </select>
 
     <select id="queryActiveUserCount" resultType="com.example.entity.ActiveUserCount">
-        SELECT * FROM tb4
+        SELECT MAX(dt) AS dt, user_name
+        FROM active_user_count
     </select>
 
 </mapper>

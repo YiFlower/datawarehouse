@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>实时看板</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+
+<body bgcolor="black">
+<!--实时看板-->
+<div align="center" style="height: 100px;font-size: 55px;color: white">
+    <p align="center" style="margin: 130px auto">业务实时看板</p>
+</div>
+
+<!--描述-->
+<div align="center" style="height: 100px;width:1000px;
+color: white;font-size: 21px;margin: 0 auto">
+    飞猪旅行，是阿里巴巴集团旗下的综合性旅游服务平台。飞猪旅行平台上提供国内外交通、酒店住宿、景区门票、目的地游玩等产品及旅游周边服务。
+</div>
+
+<!--实时-->
+<table align="center" style="margin: 50px auto" cellspacing="50">
+    <tr>
+        <td style="font-size: 26px;margin: auto 15px;color: white">用户新增数</td>
+        <td style="font-size: 26px;margin: auto 15px;color: white">累计销售数量</td>
+        <td style="font-size: 26px;margin: auto 15px;color: white">热力城市ID</td>
+        <td style="font-size: 26px;margin: auto 15px;color: white">活跃会员ID</td>
+    </tr>
+    <tr>
+        <td id="newUserCount" align="center" style="font-size: 26px;color: white">0</td>
+        <td id="totalSales" align="center" style="font-size: 26px;color: white">0</td>
+        <td id="hotCity" align="center" style="font-size: 26px;color: white">0</td>
+        <td id="activeUser" align="center" style="font-size: 26px;color: white">0</td>
+    </tr>
+</table>
+
+<!--分割线-->
+<hr width="1000" size="2" style="margin: 100px auto"/>
+
+<!--FROM-->
+<div align="center" style="height: 5px;color: white;font-size: 30px;margin: 40px auto">From YiFlower</div>
+
+<!--座右铭-->
+<div align="center" style="height: 10px;color: white;font-size: 25px;margin: 0 auto">All good things come from hard
+    times.
+</div>
+
+<script type="text/javascript">
+    $(setInterval(init, 1000));
+
+    function init() {
+        //sucess 方法会在服务器成功返回信息时候执行
+        //方法在执行时候，方法参数都是服务器传递回来的JSON对象
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/realtime/getNewUserCount",
+            port: "8090",
+            dataType: "text",
+            success: function (result) {
+                document.getElementById("newUserCount").innerHTML = result
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/realtime/getTotalSales",
+            port: "8090",
+            dataType: "text",
+            success: function (result) {
+                document.getElementById("totalSales").innerHTML = result
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/realtime/getHotCity",
+            port: "8090",
+            dataType: "text",
+            success: function (result) {
+                document.getElementById("hotCity").innerHTML = result
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/realtime/getActiveUserCount",
+            port: "8090",
+            dataType: "text",
+            success: function (result) {
+                document.getElementById("activeUser").innerHTML = result
+            }
+        });
+    }
+</script>
+</body>
+<html>
+
