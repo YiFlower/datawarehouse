@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class DataExtract {
     private String brokeList = "cdh02:9092,cdh03:9092";
-    private String topicName = "bigdata-01";
+    private String topicName = "example-dw-ods";
     private String winDataPath = "E:\\DataSet\\user_item_behavior_history.csv";
     private String unixDataPath = "/data1/dataset/user_item_behavior_history.csv";
 
@@ -53,7 +53,7 @@ public class DataExtract {
                         }
                     });
 
-            if (count % 500 == 0) {
+            if (count % 1000 == 0) {
                 log.info("发送数据...第{}条，摘要：{}", count, s);
                 Thread.sleep((long) (500 + Math.random() * 1000));
             }
