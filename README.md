@@ -4,6 +4,17 @@
 
 目前（2022/5/3）已经完成了离线数仓部分，使用经典的MySQL+SQOOP+Hive+Spark SQL架构；接下来会持续完成实时数仓（MySQL+Flink CDC+Kafka+Flink）和数据湖流批一体（MySQL+Flink CDC+Hudi+Flink）。欢迎Watch、Star、issue。
 
+2022/11/20 完成了实时数仓的部分。
+
+## 项目模块说明
+1. offline：离线数仓开发代码
+2. realtime：实时数仓开发代码
+3. realtimeApp：实时Web大屏展示开发代码，包括html和后端
+4. script：一些必要的数据库创建、shell脚本代码
+5. sendDataToMysql：将csv数据解析发送到MySQL，用于离线数仓开发
+6. streamData：将csv数据流式发送到Kafka，用于实时数仓开发
+
+
 ## 数据来源与数据说明
 
 ### 数据来源
